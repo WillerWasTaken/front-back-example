@@ -1,0 +1,7 @@
+stages:
+- test
+
+test back:
+  image: busybox
+  script:
+    - echo toto
