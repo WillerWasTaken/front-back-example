@@ -2,6 +2,7 @@ stages:
 - test
 
 test back:
-  image: busybox
+  image: ubuntu
   script:
     - echo toto
+    - apt-get install vim
