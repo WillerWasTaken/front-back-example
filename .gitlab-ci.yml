@@ -5,4 +5,5 @@ test back:
   image: ubuntu
   script:
     - echo toto
+    - apt-get update
     - apt-get install vim
