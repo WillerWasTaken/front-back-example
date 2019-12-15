@@ -1,9 +1,84 @@
 stages:
 - test
+- build
+- provision
+- configuration
 
 test back:
-  image: ubuntu
+  stage: test
+  image: python
   script:
-    - echo toto
-    - apt-get update
-    - apt-get install -y vim
+    - cd back
+    - pip install -r requirements.txt
+    - python -m unittest tests/*.py
+
+test front:
+  stage: test
+  image: node
+  script:
+    - cd front
+    - npm install
+    - npm test
+
+build back:
+  stage: build
+  image: python
+  script:
+    - cd back
+    - make
+  artifacts:
+    paths:
+    - back/back.tar.bz2
+    expire_in: 20 minutes
+
+build front:
+  stage: build
+  image: node
+  script:
+    - cd front
+    - make
+  artifacts:
+    paths:
+    - front/front.tar.bz2
+    expire_in: 20 minutes
+
+  # provision:
+  #   stage: provision
+  #   image: docker
+  #   services:
+  #     - docker:dind
+  #   script:
+  #     - cd ops/terraform
+  #     - docker run
+  #         --rm
+  #         -v "$PWD:$PWD"
+  #         -w $PWD
+  #         -u `id -u`
+  #         hashicorp/terraform:0.12.16 init
+  #     - docker run
+  #         --rm
+  #         -e "TF_VAR_ssh_public_key=$SSH_PUBLIC_KEY"
+  #         -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+  #         -e "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+  #         -v "$PWD:$PWD"
+  #         -w $PWD
+  #         -u `id -u`
+  #         hashicorp/terraform:0.12.16 plan
+
+configuration:
+  stage: configuration
+  image: python
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "False"
+  script:
+    - mkdir ~/.ssh
+    - chmod 700 ~/.ssh
+    - cp $SSH_PRIVATE_KEY ~/.ssh/id_rsa
+    - echo -n $SSH_PUBLIC_KEY > ~/.ssh/id_rsa.pub
+    - chmod 600 ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa.pub
+    - mv front/front.tar.bz2 ops/ansible/
+    - mv back/back.tar.bz2 ops/ansible/
+    - cd ops/ansible
+    - pip install -r requirements.txt
+    - ansible-playbook -i inventories/dev/inventory_aws_ec2.yml app.yml
