@@ -1,0 +1,28 @@
+---
+
+- name: Install nginx
+  apt:
+    name: nginx
+    update_cache: yes
+  become: yes
+
+- name: Copy reverse proxy configuration
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  become: yes
+  notify:
+    - Reload nginx service
+    - Restart nginx service
+
+- name: Ensure service is started
+  service:
+    name: nginx
+    state: started
+  become: yes
+
+- name: Ensure service is enabled
+  service:
+    name: nginx
+    enabled: yes
+  become: yes

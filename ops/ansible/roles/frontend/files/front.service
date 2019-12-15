@@ -1,0 +1,10 @@
+[Unit]
+Description=Front server
+
+[Service]
+Environment="BACKEND_URL=http://localhost:5000"
+ExecStart=/usr/bin/node /opt/front/server.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

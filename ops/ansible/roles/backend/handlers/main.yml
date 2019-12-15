@@ -1,0 +1,13 @@
+---
+
+- name: Reload back service
+  systemd:
+    name: back
+    daemon_reload: yes
+  become: yes
+
+- name: Restart back service
+  service:
+    name: back
+    state: restarted
+  become: yes

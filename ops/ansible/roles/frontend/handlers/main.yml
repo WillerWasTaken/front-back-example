@@ -1,0 +1,13 @@
+---
+
+- name: Reload front service
+  systemd:
+    name: front
+    daemon_reload: yes
+  become: yes
+
+- name: Restart front service
+  service:
+    name: front
+    state: restarted
+  become: yes

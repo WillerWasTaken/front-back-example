@@ -1,0 +1,10 @@
+[Unit]
+Description=Back server
+
+[Service]
+Environment="USER_NAME=toto"
+ExecStart=/usr/bin/python3 /opt/back/server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

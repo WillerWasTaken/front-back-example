@@ -1,0 +1,42 @@
+---
+
+- name: Install nodejs
+  apt:
+    name: nodejs
+    update_cache: yes
+  become: yes
+
+- name: Ensure installation directory exists
+  file:
+    path: /opt/front
+    state: directory
+  become: yes
+
+- name: Install application
+  unarchive:
+    src: ./front.tar.bz2
+    dest: /opt/front
+  become: yes
+  notify:
+    - Restart front service
+
+- name: Install service
+  copy:
+    src: front.service
+    dest: /etc/systemd/system/front.service
+  become: yes
+  notify:
+    - Reload front service
+    - Restart front service
+
+- name: Ensure service is started
+  service:
+    name: front
+    state: started
+  become: yes
+
+- name: Ensure service is enabled
+  service:
+    name: front
+    enabled: yes
+  become: yes
