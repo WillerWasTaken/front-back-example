@@ -1,0 +1,14 @@
+version: '3'
+services:
+  back-example:
+    build: back/.
+    environment:
+      USER_NAME: toto
+    ports:
+    - "5000:5000"
+  front-example:
+    build: front/.
+    environment:
+      BACKEND_URL: http://back-example:5000
+    ports:
+      - "3000:3000"
