@@ -1,0 +1,25 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back
+  labels:
+    app: back
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+      - name: back
+        image: back-example
+        imagePullPolicy: Never
+        env:
+        - name: USER_NAME
+          value: tata
