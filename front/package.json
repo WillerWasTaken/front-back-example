@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/WillerWasTaken/front-back-example#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
   },
